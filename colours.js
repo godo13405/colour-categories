@@ -170,7 +170,7 @@ document.querySelector('body').innerHTML = `${document.querySelector('body').inn
 let q = new URLSearchParams(window.location.search);
 q = decodeURI(q.get('q'));
 
-if (q && q.length) {
+if (q && q.length && q !== 'null') {
   document.querySelector('input[type=search]').value = q;
   q.replace(' ', '');
 
