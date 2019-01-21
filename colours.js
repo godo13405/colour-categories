@@ -48,6 +48,7 @@ let sorted = {
       'Other': []
     }
   },
+  smallSorted = {},
   colorsHTML = '';
 
 const fn = {
@@ -100,8 +101,12 @@ const fn = {
     }
   },
   categorize: (colour) => {
-    let cats = colourFilter(colour),
-      output = `<div class="color"><span class="color-sample" style="background:hsl(${colour[0]},${colour[1]}%,${colour[2]}%)"><i>${colour[0]}, ${colour[1]}, ${colour[2]}</i></span>`;
+    let cats = colourFilter(colour);
+    const colourCategories = Object.keys(smallSorted);
+    cats = cats.filter((x, i) => {
+      return colourCategories.includes(x) && cats[i - 1] !== x;
+    });
+    let output = `<div class="color"><span class="color-sample" style="background:hsl(${colour[0]},${colour[1]}%,${colour[2]}%)"><i>${colour[0]}, ${colour[1]}, ${colour[2]}</i></span>`;
     for (const cat of cats) {
       output += `<span class="category">${cat}</span>`;
     }
@@ -116,19 +121,25 @@ for (let x of colours) {
   colourFilter(x, sorted);
 }
 
-if (!extend) {
-  sorted = {
-    'Grays': sorted.Neutrals.Lights.concat(sorted.Neutrals.Grays),
-    'Pastels': sorted.Shades.Pastels,
-    'Neutrals': sorted.Shades.Neutrals,
-    'Darks': sorted.Neutrals.Darks.concat(sorted.Shades.Darks),
-    'Reds': sorted.Reds.Reds.concat(sorted.Reds.Pinks),
-    'Yellows': sorted.Yellows.Yellows.concat(sorted.Oranges.Oranges),
-    'Greens': sorted.Greens.Greens,
-    'Blues': sorted.Blues.Blues.concat(sorted.Blues.Blues, sorted.Blues.Light, sorted.Blues.Dark, sorted.Blues.Purples),
-    'Browns': sorted.Browns.Browns,
-    'Others': sorted.Other.Other
+let q = new URLSearchParams(window.location.search);
+q = decodeURI(q.get('q'));
+
+if (!extend || (q && q.length)) {
+  smallSorted = {
+    'Gray': sorted.Neutrals.Lights.concat(sorted.Neutrals.Grays),
+    'Pastel': sorted.Shades.Pastels,
+    'Neutral': sorted.Shades.Neutrals,
+    'Dark': sorted.Neutrals.Darks.concat(sorted.Shades.Darks),
+    'Red': sorted.Reds.Reds.concat(sorted.Reds.Pinks),
+    'Yellow': sorted.Yellows.Yellows.concat(sorted.Oranges.Oranges),
+    'Green': sorted.Greens.Greens,
+    'Blue': sorted.Blues.Blues.concat(sorted.Blues.Blues, sorted.Blues.Light, sorted.Blues.Dark, sorted.Blues.Purples),
+    'Brown': sorted.Browns.Browns,
+    'Other': sorted.Other.Other
   };
+}
+if (!extend) {
+  sorted = smallSorted;
 }
 
 for (let x in sorted) {
@@ -167,9 +178,6 @@ for (let s in sorted) {
 document.querySelector('body').innerHTML = `${document.querySelector('body').innerHTML}${colorsHTML}`;
 
 // search
-let q = new URLSearchParams(window.location.search);
-q = decodeURI(q.get('q'));
-
 if (q && q.length && q !== 'null') {
   document.querySelector('input[type=search]').value = q;
   q.replace(' ', '');
@@ -179,11 +187,15 @@ if (q && q.length && q !== 'null') {
     // url
     document.querySelector('.output-container').innerHTML = `<span class="image" style='background-image:url(${q})'></span>${document.querySelector('.output-container').innerHTML}`;
 
-    let list = '';
+    let list = '',
+        tempCategories;
+        console.log(Vibrant);
     Vibrant.from(q).getPalette((err, palette) => {
       console.log('palette ', palette);
+      const colourCategories = Object.keys(smallSorted);
       for (const key in palette) {
-        list += fn.categorize(fn.rgbToHsl(palette[key].rgb));
+        tempCategories = fn.categorize(fn.rgbToHsl(palette[key].rgb));
+        list += tempCategories;
       }
       document.querySelector('.categories').innerHTML = list;
     });
