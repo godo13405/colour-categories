@@ -3,11 +3,6 @@
 /* eslint-disable handle-callback-err */
 'use strict';
 
-import colours from './colours-list.js';
-import colourFilter from './colourFilter.js';
-// import colourNames from './colour-names.js'
-// console.log(colourNames);
-
 const urlParams = new URLSearchParams(window.location.search),
   extend = urlParams.get('extend');
 
