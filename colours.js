@@ -190,7 +190,7 @@ if (q && q.length && q !== 'null') {
     let list = '',
         tempCategories;
         console.log(Vibrant);
-    Vibrant.from(q).getPalette((err, palette) => {
+    Vibrant.from(`https://cors-escape.herokuapp.com/${q}`).getPalette((err, palette) => {
       console.log('palette ', palette);
       const colourCategories = Object.keys(smallSorted);
       for (const key in palette) {
