@@ -5,6 +5,8 @@
 
 import colours from './colours-list.js';
 import colourFilter from './colourFilter.js';
+// import colourNames from './colour-names.js'
+// console.log(colourNames);
 
 const urlParams = new URLSearchParams(window.location.search),
   extend = urlParams.get('extend');
@@ -52,74 +54,30 @@ let sorted = {
   colorsHTML = '';
 
 const fn = {
-  colorsToInsert: col => {
-    colorsHTML = `${colorsHTML}<div class="color" style="background-color:hsl(${col[0]},${col[1]}%,${col[2]}%)"></div>`;
-  },
-  rgbToHsl: (rgb) => {
-    let r = rgb[0] / 255,
-      g = rgb[1] / 255,
-      b = rgb[2] / 255;
-
-    let max = Math.max(r, g, b),
-      min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
-
-    if (max == min) {
-      h = s = 0; // achromatic
-    } else {
-      let d = max - min;
-      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-      switch (max) {
-        case r:
-          h = (g - b) / d + (g < b ? 6 : 0);
-          break;
-        case g:
-          h = (b - r) / d + 2;
-          break;
-        case b:
-          h = (r - g) / d + 4;
-          break;
-        default:
-          break;
-      }
-
-      h /= 6;
-    }
-
-    h = Math.round(h * 360); // °
-    s = Math.round(s * 100); // %
-    l = Math.round(l * 100); // %
-
-    return [h, s, l];
-  },
-  arraySort: (a, b) => {
-    if ((a[2] / 2) + (a[1] / a[0]) > (b[2] / 2) + (b[1] / b[0])) {
-      return 1;
-    } else {
-      return -1;
+  brightnessByColor: color => {
+      var m = color.substr(1).match(color.length == 7 ? /(\S{2})/g : /(\S{1})/g);
+      if (m) var r = parseInt(m[0], 16),
+        g = parseInt(m[1], 16),
+        b = parseInt(m[2], 16);
+    if (typeof r != "undefined") {
+      return ((r * 299) + (g * 587) + (b * 114)) / 1000;
     }
   },
-  categorize: (colour) => {
-    let cats = colourFilter(colour);
-    const colourCategories = Object.keys(smallSorted);
-    cats = cats.filter((x, i) => {
-      return colourCategories.includes(x) && cats[i - 1] !== x;
-    });
-    let output = `<div class="color"><span class="color-sample" style="background:hsl(${colour[0]},${colour[1]}%,${colour[2]}%)"><i>${colour[0]}, ${colour[1]}, ${colour[2]}</i></span>`;
-    for (const cat of cats) {
-      output += `<span class="category">${cat}</span>`;
-    }
-    output += '</div>';
+  categorize: colour => {
+    const col = ntc.name(colour);
+    let output = `<div class="color-sample ${fn.brightnessByColor(colour) > 100 ? 'light' : 'dark'}" style="background-color:${colour}">
+      <i>${colour}</i>
+      <span class="category ${col[2] ? 'accurate' : 'approximate'}" > ${col[1]}</span>
+    </div>`;
 
     return output;
+  },
+  nameColour: colour => {
+    fetch().then(x => x.json()).then(x => {
+
+    });
   }
 };
-
-for (let x of colours) {
-  x = fn.rgbToHsl(x);
-  colourFilter(x, sorted);
-}
 
 let q = new URLSearchParams(window.location.search);
 q = decodeURI(q.get('q'));
@@ -142,41 +100,6 @@ if (!extend) {
   sorted = smallSorted;
 }
 
-for (let x in sorted) {
-  if (Array.isArray(sorted[x])) {
-    sorted[x].sort(fn.arraySort);
-  } else {
-    for (let xx in sorted[x]) {
-      sorted[x][xx].sort(fn.arraySort);
-    }
-  }
-}
-
-for (let s in sorted) {
-  if (Array.isArray(sorted[s])) {
-    colorsHTML = `${colorsHTML}<div class="category"><h3>${s} <sup>${sorted[s].length}</sup></h3>`;
-    for (let x of sorted[s]) {
-      fn.colorsToInsert(x);
-    }
-    colorsHTML = `${colorsHTML}</div>`;
-  } else {
-    for (let ss in sorted[s]) {
-      if (ss !== s) {
-        colorsHTML = `${colorsHTML}<div class="sub-category"><h5>${ss} <sup>${sorted[s][ss].length}</sup></h5>`;
-      } else {
-        colorsHTML = `${colorsHTML}<div class="category"><h3>${ss} <sup>${sorted[s][ss].length}</sup></h3>`;
-      }
-
-      for (let x of sorted[s][ss]) {
-        fn.colorsToInsert(x);
-      }
-      colorsHTML = `${colorsHTML}</div>`;
-    }
-  }
-}
-
-document.querySelector('body').innerHTML = `${document.querySelector('body').innerHTML}${colorsHTML}`;
-
 // search
 if (q && q.length && q !== 'null') {
   document.querySelector('input[type=search]').value = q;
@@ -185,20 +108,22 @@ if (q && q.length && q !== 'null') {
   // input format
   if (q.match(/[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g)) {
     // url
-    document.querySelector('.output-container').innerHTML = `<span class="image" style='background-image:url(${q})'></span>${document.querySelector('.output-container').innerHTML}`;
+    let img = new Image();
+    img.src = q;
+    img.onload = () => {
+      document.querySelector('.output-container').innerHTML = `<img class="image" width="${img.width}" height="${img.height}" src='${q}' />${document.querySelector('.output-container').innerHTML}`;
 
-    let list = '',
-        tempCategories;
-        console.log(Vibrant);
-    Vibrant.from(`https://cors-escape.herokuapp.com/${q}`).getPalette((err, palette) => {
-      console.log('palette ', palette);
-      const colourCategories = Object.keys(smallSorted);
-      for (const key in palette) {
-        tempCategories = fn.categorize(fn.rgbToHsl(palette[key].rgb));
-        list += tempCategories;
-      }
-      document.querySelector('.categories').innerHTML = list;
-    });
+      let list = '',
+          tempCategories;
+      Vibrant.from(`https://cors-escape.herokuapp.com/${q}`).getPalette((err, palette) => {
+        const colourCategories = Object.keys(smallSorted);
+        for (const key in palette) {
+          tempCategories = fn.categorize(palette[key].hex);
+          list += tempCategories;
+        }
+        document.querySelector('.categories').innerHTML = list;
+      });
+    }
   } else if (q.match(/[0-9]*\,[0-9]*\,[0-9]*/g)) {
     // colour
     q = q.split(',');

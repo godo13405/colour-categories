@@ -1,7 +1,14 @@
 body {
   background: #fefefe;
   font-family: 'Helvetica Neue', 'Arial', sans;
-  font-size: 14px;
+  font-size: 18px;
+}
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 #container {
@@ -25,27 +32,29 @@ body {
   padding-bottom: 100%;
 }
 
-.sub-category {
-  padding-left: 1rem;
-  margin-left: 1rem;
-  border-left: #ddd solid 1px;
-}
-
-h3, h5 {
+h3,
+h5 {
   margin: 0;
   padding: .6em 0 0;
   display: block;
 }
 
 form {
-  position: relative;
-}
-
-form input,
-form .color {
+  padding: 3vmin 1vmin;
+  height: 100vh;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  position: relative;
+  -ms-flex-line-pack: stretch;
+      align-content: stretch;
+}
+
+form input {
   height: 2rem;
 }
 
@@ -54,44 +63,64 @@ form input {
   border-bottom: 1px solid #ddd;
   font-size: 1rem;
   width: 100%;
+  margin-bottom: 2.5vh;
 }
 
 .categories {
-  -webkit-box-flex: 2;
-      -ms-flex: 2;
-          flex: 2;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  min-height: 15rem;
+}
+
+.categories .color {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  position: relative;
 }
 
 .categories .color-sample {
   padding: .5rem .8rem;
-  width: 20vw;
-  min-width: 15rem;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
-.categories .color-sample i {
-  background-color: rgba(255, 255, 255, 0.2);
+.categories .color-sample.dark {
+  color: #fff;
 }
 
-.categories .category {
-  display: inline-block;
-  padding: .2rem .4rem;
-  border: 1px solid #ddd;
-  border-radius: .4rem;
-  margin: .2rem;
+.categories .color-sample > * {
+  padding: .2rem;
+  display: block;
 }
 
 .output-container {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-}
-
-.image {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: right;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.image {
+  min-width: 100%;
+  width: auto;
+  height: auto;
 }
 /*# sourceMappingURL=style.css.map */
