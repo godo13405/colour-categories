@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "color-name-list": "^3.52.1",
+    "nearest-colors": "^1.0.0",
     "node-vibrant": "^3.2.0-alpha"
   }
 }
