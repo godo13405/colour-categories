@@ -1,3 +1,5 @@
+$input-height: 2rem;
+
 body {
     background: #fefefe;
     font-family: 'Helvetica Neue', 'Arial', sans;
@@ -7,7 +9,7 @@ body {
 *,
 *:before,
 *:after {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 #container {
@@ -39,58 +41,43 @@ h5 {
 }
 
 form {
-    padding: 3vmin 1vmin;
+    border: 0 solid transparent;
+    border-width: 3vmin 1vmin;
     height: 100vh;
-    display: flex;
-    flex-direction: column;
     position: relative;
-    align-content: stretch;
+    input {
+        height: $input-height;
+        border: 0;
+        border-bottom: 1px solid #ddd;
+        font-size: 1rem;
+        width: 100%;
+        margin-bottom: 2.5vh;
+    }
 }
 
-form input {
-    height: 2rem;
-}
-
-form input {
-    border: 0;
-    border-bottom: 1px solid #ddd;
-    font-size: 1rem;
+canvas {
     width: 100%;
-    margin-bottom: 2.5vh;
 }
 
 .categories {
-  width: 100%;
-  display: flex;
-  flex: 1;
-  min-height: 15rem;
-  .color {
-    flex: 1;
-    position: relative;
-  }
+    width: 100%;
+    display: flex;
+    min-height: 15rem;
+    .color {
+        flex: 1;
+        position: relative;
+    }
     .color-sample {
         padding: .5rem .8rem;
         width: 100%;
         display: flex;
         flex-direction: column;
         &.dark {
-          color: #fff;
+            color: #fff;
         }
-        > * {
-          padding: .2rem;
-          display: block;
+        >* {
+            padding: .2rem;
+            display: block;
         }
     }
-}
-
-.output-container {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-}
-
-.image {
-    min-width: 100%;
-    width: auto;
-    height: auto;
 }
